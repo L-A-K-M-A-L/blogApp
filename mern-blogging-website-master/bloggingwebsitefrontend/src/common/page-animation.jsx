@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion"
-import { Children } from "react";
+
 
 const AnimationWrapper = ({ children,
     initial = { opacity: 0 },
