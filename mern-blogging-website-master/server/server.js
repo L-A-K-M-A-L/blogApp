@@ -8,6 +8,10 @@ import { nanoid } from 'nanoid';
 // to generate token from db
 import jwt from 'jsonwebtoken';
 
+// to allow server to listen any port
+import cors from 'cors'
+
+
 //  schema below
 import User from './Schema/User.js'
 
@@ -19,6 +23,7 @@ const server = express();
 let PORT = 3000;
 
 server.use(express.json());
+server.use(cors());
 
 mongoose.connect(process.env.DB_LOCATION, {
     autoIndex: true
