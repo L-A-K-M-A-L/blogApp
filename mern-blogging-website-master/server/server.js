@@ -9,11 +9,11 @@ import { nanoid } from 'nanoid';
 import jwt from 'jsonwebtoken';
 
 // to allow server to listen any port
-import cors from 'cors'
+import cors from 'cors';
 
 
 //  schema below
-import User from './Schema/User.js'
+import User from './Schema/User.js';
 
 
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
