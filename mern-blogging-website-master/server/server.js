@@ -26,7 +26,7 @@ mongoose.connect(process.env.DB_LOCATION, {
 
 const formatDatatoSend = (user) => {
 
-    const access_token = jwt.sign({ id: user._id }, process.env.SECRET_ACCESS_KEY)
+    const access_token = jwt.sign({ id: user._id }, process.env.SECRET_ACCESS_KEY);
 
     return {
         access_token,
@@ -45,6 +45,7 @@ const generateUserName = async (email) => {
     return username
 }
 
+// For sign up configurations
 server.post("/signup", (req, res) =>{
     // destrructre data
    let { fullname, email, password } = req.body;
@@ -93,6 +94,39 @@ server.post("/signup", (req, res) =>{
     })
 
 
+})
+
+//  for sign in configuration
+server.post("/signin", (req, res) => {
+    let { email, password }  = req.body;
+
+    // find the user 
+    User.findOne({ "personal_info.email": email })
+    .then((user)  => {
+
+        if(!user){
+            return res.status(403).json({ "error" : "Email not found" })
+        }
+        
+        // compare user enter pass and db pass word correct
+        bcrypt.compare(password, user.personal_info.password, (err, result) => {
+            if(err){
+                return res.status(403).json({ "error" : "Error occured while loging please try again" })
+            }
+
+            if(!result){
+                return res.status(403).json({ "error" : "Inccorect password" })
+            }else{
+                return res.status(200).json(formatDatatoSend(user))
+            }
+        })
+
+        // return res.json({ "status": "got user document" })
+    })
+    .catch( err => {
+        console.log(err.message)
+        return res.status(500).json({ "error" : "Email not found" })
+    })
 })
 
 server.listen(PORT, () => {
