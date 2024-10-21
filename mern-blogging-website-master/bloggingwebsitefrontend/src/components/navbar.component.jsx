@@ -1,10 +1,36 @@
-import { useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom"
 import logo from "../imgs/logo.png"
+import { UserContext } from "../App";
+import UserNavigationPanel from "./user-navigation.component"
 
 
 const NavBar = () => {
     const [searchBoxVisibility, setSearchBoxVisibility] = useState(false);
+    const [userNavPanel, setUserNavPanel] = useState(false);
+
+    // const { userAuth, userAuth: { access_token, profile_img } } = useContext(UserContext);
+
+    const { userAuth } = useContext(UserContext);
+    const { access_token, profile_img } = userAuth || {};  // Default to an empty object if userAuth is undefined
+
+
+
+    const handleUserNavPanel = () => {
+        setUserNavPanel(currentVal => !currentVal);
+    };
+
+
+    // const handleBlur = () => {
+    //     setUserNavPanel(false);
+    // }
+    const handleBlur = (e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) {
+            setUserNavPanel(false);  // Close the panel only if the next focus element is not a child of the current one
+        }
+    };
+
+
     return (
         <>
             <nav className="navbar">
@@ -40,13 +66,38 @@ const NavBar = () => {
                         <p>Write</p>
                     </Link>
 
-                    <Link className="btn-dark py-2" to="/signin">
-                        Sign In
-                    </Link>
+                    {/*  if user logged in sig in and sign up button will change to sign out button */}
+                    {
+                        access_token ?
+                            <>
+                                <Link to="/dashboard/notification">
+                                    <button className="w-12 h-12 rounded-full bg-grey relative hover:bg-black/10">
+                                        <i className="fi fi-rr-bell-ring text-2xl block ml-1"></i>
+                                    </button>
+                                </Link>
+                                <div className="relative" onClick={handleUserNavPanel} onBlur={handleBlur}>
+                                    <button className="w-12 h-12 mt-1">
+                                        <img src={profile_img} alt="user_profile_image" className="w-full h-full object-cover rounded-full" />
+                                    </button>
+                                    {
+                                        userNavPanel ?
+                                            <UserNavigationPanel /> : ""
+                                    }
+                                </div>
+                            </>
+                            :
+                            <>
+                                <Link className="btn-dark py-2" to="/signin">
+                                    Sign In
+                                </Link>
 
-                    <Link className="btn-light py-2 hidden md:block" to="/signup">
-                        Sign Up
-                    </Link>
+                                <Link className="btn-light py-2 hidden md:block" to="/signup">
+                                    Sign Up
+                                </Link>
+                            </>
+                    }
+
+
                 </div>
 
             </nav>
