@@ -21,15 +21,11 @@ const NavBar = () => {
     };
 
 
-    // const handleBlur = () => {
-    //     setUserNavPanel(false);
-    // }
-    const handleBlur = (e) => {
+    const handleClickOutside = (e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) {
-            setUserNavPanel(false);  // Close the panel only if the next focus element is not a child of the current one
+            setUserNavPanel(false);
         }
     };
-
 
     return (
         <>
@@ -75,8 +71,8 @@ const NavBar = () => {
                                         <i className="fi fi-rr-bell-ring text-2xl block ml-1"></i>
                                     </button>
                                 </Link>
-                                <div className="relative" onClick={handleUserNavPanel} onBlur={handleBlur}>
-                                    <button className="w-12 h-12 mt-1">
+                                <div className="relative" onBlur={handleClickOutside} tabIndex={0}>
+                                    <button  onClick={handleUserNavPanel}  className="w-12 h-12 mt-1">
                                         <img src={profile_img} alt="user_profile_image" className="w-full h-full object-cover rounded-full" />
                                     </button>
                                     {
