@@ -19,7 +19,7 @@ const UserAuthForm = ({ type }) => {
     // import user-details, import from app.jsx
     let { userAuth, setUserAuth } = useContext(UserContext);
     let access_token = userAuth ? userAuth.access_token : null;
-    console.log(access_token);
+    // console.log(access_token);
 
     const userAuthThroughServer = (serverRoute, formData) => {
 
