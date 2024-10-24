@@ -19,6 +19,9 @@ import admin from "firebase-admin";
 // import serviceAccountKey from "./react-web-1c47e-firebase-adminsdk-2oi6e-9625b4bef6.json" assert { type : "json" }
 
 import { createRequire } from 'module';
+
+import aws from "aws-sdk";
+
 const require = createRequire(import.meta.url);
 const serviceAccountKey = require("./react-web-1c47e-firebase-adminsdk-2oi6e-9625b4bef6.json");
 
@@ -32,6 +35,7 @@ let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for pass
 
 const server = express();
 let PORT = 3000;
+
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccountKey)
 })
@@ -42,6 +46,28 @@ server.use(cors());
 mongoose.connect(process.env.DB_LOCATION, {
     autoIndex: true
 })
+
+//  aetup S3 bucket
+const s3 = new aws.S3({
+    region: 'ap-southeast-2',
+    accessKeyId : process.env.AWS_SECRET_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_ACCESS_KEY
+});
+
+//  for upload image tyo aws
+const generateUploadURL = async () => {
+
+    const date = new Date();
+    const imageName = `${nanoid()}-${date.getTime()}.jpeg`;
+
+   return await s3.getSignedUrlPromise('putObject', {
+        Bucket: 'react-web-blogging',
+        Key: imageName,
+        Expires: 1000,
+        ContentType: "image/jpeg"
+    })
+
+}
 
 const formatDatatoSend = (user) => {
 
@@ -63,6 +89,17 @@ const generateUserName = async (email) => {
     isUserNameNotUnique ? username += nanoid().substring(0, 5) : "";
     return username
 }
+
+// upload image url root
+server.get('/get-upload-url', (req, res) => {
+    generateUploadURL()
+    .then(url => {
+        res.status(200).json({ uploadURL: url })
+    })
+    .catch(err => {
+            return res.status(500).json({ error: err.message })
+        })
+})
 
 // For sign up configurations
 server.post("/signup", (req, res) => {

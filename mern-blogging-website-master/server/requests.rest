@@ -1,7 +1,8 @@
-POST http://localhost:3000/signin
-Content-Type: application/json
+# POST http://localhost:3000/signin
+# Content-Type: application/json
 
-{
-    "email": "lakmalprasanna4@gmail1.com",
-    "password":"2pp45qD"
-}
+# {
+#     "email": "lakmalprasanna4@gmail1.com",
+#     "password":"2pp45qD"
+# }
+GET http://localhost:3000/get-upload-url
